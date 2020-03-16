@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttergesture/entity/slide_type.dart';
+import 'package:fluttergesture/widget/book_widget.dart';
+
+import 'widget/book_widget.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,35 +28,46 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  BookPainter painter;
+
+  double aX =-1;
+  double aY = -1;
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-
-        title: Text("手势滑动"),
-      ),
       body: GestureDetector(
-        onHorizontalDragStart: (startValue){
-          print("开始值：$startValue");
+        onHorizontalDragUpdate: (value){
+          setState(() {
+            //从上半部分翻页
+            aX = value.globalPosition.dx;
+            aY = value.globalPosition.dy;
+          });
         },
-        onHorizontalDragEnd: (endValue){
-          print("结束值：$endValue");
-        },
-        onHorizontalDragUpdate: (updateValue){
-          print("更新值：${updateValue.globalPosition.dx}");
-          print("更新值：${updateValue.globalPosition.dy}");
-
-
-        },
-        child: Container(
-            color: Color.fromARGB(255, 220, 220, 220),
-            child: new Center(
-              child: new Text("Flutter手势"),
-            )
-        ),
+        onHorizontalDragStart: (value){
+          setState(() {
+            //从上半部分翻页
+            aX = value.globalPosition.dx;
+            aY = value.globalPosition.dy;
+          });        },
+        onHorizontalDragEnd: (value){
+          setState(() {
+            //从上半部分翻页
+            aX =-1;
+            aY = -1;
+          });        },
+        child: ConstrainedBox(
+            constraints: BoxConstraints.expand(),
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: CustomPaint(
+                painter: painter = BookPainter(context,aX: aX,aY: aY),
+              )
+          ),
       ),
+    )
     );
   }
 }
